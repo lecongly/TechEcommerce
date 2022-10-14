@@ -19,11 +19,11 @@ export const AppProvider = ({ children }: ContextProviderProps) => {
     fetch(args).then((res): Promise<CategoryInterface[]> => res.json());
 
   const { data: productsData, isValidating: productsLoading } = useSWR(
-    `https://lcl-restful-api.herokuapp.com/api/products`,
+    `${process.env.NEXT_PUBLIC_API_URL}/api/products`,
     fetcherProducts
   );
   const { data: categoriesData, isValidating: categoriesLoading } = useSWR(
-    `https://lcl-restful-api.herokuapp.com/api/categories`,
+    `${process.env.NEXT_PUBLIC_API_URL}/api/categories`,
     fetcherCategories
   );
   useEffect(() => {

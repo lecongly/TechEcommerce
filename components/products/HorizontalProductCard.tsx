@@ -1,9 +1,18 @@
-import Image from 'next/image';
-import Link from 'next/link';
-import { useState } from 'react';
-import { ProductInterface } from 'interfaces/products';
+import Image from "next/image";
+import Link from "next/link";
+import { useState } from "react";
+import { ProductInterface } from "../../interfaces/products";
 
-const HorizontalProductCard = ({ _id, product_id, image, name, stock, price, content, sold }: ProductInterface) => {
+const HorizontalProductCard = ({
+  _id,
+  product_id,
+  image,
+  name,
+  stock,
+  price,
+  content,
+  sold,
+}: ProductInterface) => {
   const [currentHover, setCurrentHover] = useState<string | null>(null);
   return (
     <Link href={`/${_id}`}>
@@ -14,7 +23,9 @@ const HorizontalProductCard = ({ _id, product_id, image, name, stock, price, con
       >
         <div className="xs:col-span-1 sm:col-span-1 md:col-span-3 lg:col-span-4 xl:col-span-1 ">
           <Image
-            className={`rounded-lg duration-200 ${currentHover === _id ? 'scale-105 ' : 'scale-100'}`}
+            className={`rounded-lg duration-200 ${
+              currentHover === _id ? "scale-105 " : "scale-100"
+            }`}
             src={image.url}
             alt={product_id}
             width={680}
@@ -30,11 +41,15 @@ const HorizontalProductCard = ({ _id, product_id, image, name, stock, price, con
           <div className="flex flex-col items-start justify-center text-zinc-500">
             <p className="text-sm">
               Stock:
-              <span className="ml-2 font-supremeBold tracking-wide">{stock}</span>
+              <span className="ml-2 font-supremeBold tracking-wide">
+                {stock}
+              </span>
             </p>
             <p className="text-base font-supremeRegular">
               Solds:
-              <span className="ml-2 font-supremeBold tracking-wide">{sold}</span>
+              <span className="ml-2 font-supremeBold tracking-wide">
+                {sold}
+              </span>
             </p>
           </div>
           <div className="flex items-center justify-start mt-6">
