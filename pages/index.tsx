@@ -32,46 +32,41 @@ const Home: NextPage = () => {
     }
   }, [products]);
   return (
-    <div>
-      <Header />
-      <Layout title="Home - TechEcommerce">
-        <section className="max-w-screen-xl mx-auto xs:w-11/12 sm:w-11/12 md:w-11/12 lg:w-11/12 xl:w-11/12  mb-10">
-          <h2 className=" font-semibold text-xl text-gray-900 mb-6">
-            New Products
-          </h2>
-          {productsLoading ? (
-            <Loader />
-          ) : (
-            <div className="grid xs:grid-cols-1 sm:grid-cols-2  md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-4 gap-5 w-full">
-              {latest.map((product) => (
-                <VerticalProductCard key={product._id} {...product} />
-              ))}
-            </div>
-          )}
-        </section>
+    <Layout title="Home - TechEcommerce">
+      <section className="max-w-screen-xl mx-auto xs:w-11/12 sm:w-11/12 md:w-11/12 lg:w-11/12 xl:w-11/12  mb-10">
+        <h2 className=" font-semibold text-xl text-gray-900 mb-6">
+          New Products
+        </h2>
+        {productsLoading ? (
+          <Loader />
+        ) : (
+          <div className="grid xs:grid-cols-1 sm:grid-cols-2  md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-4 gap-5 w-full">
+            {latest.map((product) => (
+              <VerticalProductCard key={product._id} {...product} />
+            ))}
+          </div>
+        )}
+      </section>
 
-        <section className="max-w-screen-xl mx-auto xs:w-11/12 sm:w-11/12 md:w-11/12 lg:w-11/12 xl:w-11/12">
-          <div className="flex flex-row items-center justify-between pb-5">
-            <div>
-              <h2 className=" font-semibold text-xl text-gray-900 mb-6">
-                Shop
-              </h2>
-              <h2 className="mt-3 text-sm">Products / {category.name}</h2>
-            </div>
-            <div>
-              <span>{products.length}</span>
-              <span className="ml-1">
-                {products?.length === 1 ? "Product" : "Products"}
-              </span>
-            </div>
+      <section className="max-w-screen-xl mx-auto xs:w-11/12 sm:w-11/12 md:w-11/12 lg:w-11/12 xl:w-11/12">
+        <div className="flex flex-row items-center justify-between pb-5">
+          <div>
+            <h2 className=" font-semibold text-xl text-gray-900 mb-6">Shop</h2>
+            <h2 className="mt-3 text-sm">Products / {category.name}</h2>
           </div>
-          <div className="w-full grid xs:grid-cols-1 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-12 xl:grid-cols-12 gap-5">
-            <Categories setCategory={setCategory} category={category} />
-            <Products category={category} />
+          <div>
+            <span>{products.length}</span>
+            <span className="ml-1">
+              {products?.length === 1 ? "Product" : "Products"}
+            </span>
           </div>
-        </section>
-      </Layout>
-    </div>
+        </div>
+        <div className="w-full grid xs:grid-cols-1 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-12 xl:grid-cols-12 gap-5">
+          <Categories setCategory={setCategory} category={category} />
+          <Products category={category} />
+        </div>
+      </section>
+    </Layout>
   );
 };
 
