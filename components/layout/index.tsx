@@ -3,6 +3,8 @@ import { useContext } from "react";
 import { AppContext } from "../../context/AppContext";
 import { LayoutContext } from "../../context/LayoutContext";
 import SignIn from "../auth/SignIn";
+import SignUp from "../auth/SignUp";
+import AlertNotification from "./AlertNotification";
 
 interface Props {
   title: string;
@@ -28,6 +30,8 @@ const Layout = ({ children, title }: Props) => {
       <main className="relative w-full h-full">
         <div className="w-full content py-5">{children}</div>
         {openSignInModal && <SignIn />}
+        {openSignUpModal && <SignUp />}
+        {alert && <AlertNotification message={alertMessage} type={alertType} />}
       </main>
     </>
   );

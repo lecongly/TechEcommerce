@@ -1,10 +1,11 @@
 import { useRouter } from "next/router";
-import { createContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { ProductInterface } from "../interfaces/products";
 
 import {
   CartInterface,
   SignInInterface,
+  SignUpInterface,
   User,
   userContextProps,
   userProviderProps,
@@ -12,6 +13,10 @@ import {
 import Cookies from "js-cookie";
 import { refreshToken } from "../helpers/auth/refreshToken";
 import { getCurrentUser } from "../helpers/auth/getCurrentUser";
+import { LayoutContext } from "./LayoutContext";
+import { AlertTypes } from "../interfaces/frontend/alerts";
+import myAxios from "../helpers/axios";
+import { clearTokens, setTokensToCookie } from "../helpers/cookie";
 
 export const UserContext = createContext({} as userContextProps);
 
@@ -28,25 +33,12 @@ export const UserProvider = ({ children }: userProviderProps) => {
   const [cartTotal, setCartTotal] = useState<number>(0);
   const [wishList, setWishList] = useState<ProductInterface[]>([]);
 
+  const { activateAlert } = useContext(LayoutContext);
+
   useEffect(() => {
     const authToken = Cookies.get("access");
     if (authToken) {
       setToken(authToken);
-      refreshToken().then((data) => {
-        setToken(data.accessToken);
-        Cookies.set("access", data.accessToken, {
-          expires: new Date().getTime() + 5 * 60 * 1000,
-          sameSite: process.env.NODE_ENV === "production" ? "none" : "Lax",
-          secure: process.env.NODE_ENV === "production" ? true : false,
-        });
-        if (data.refreshToken) {
-          Cookies.set("refresh", data.refreshToken, {
-            expires: new Date().getTime() + 7 * 24 * 60 * 60 * 1000,
-            sameSite: process.env.NODE_ENV === "production" ? "none" : "Lax",
-            secure: process.env.NODE_ENV === "production" ? true : false,
-          });
-        }
-      });
     }
   }, []);
   //Get the user information from destructing the uid from token.
@@ -64,62 +56,48 @@ export const UserProvider = ({ children }: userProviderProps) => {
     }
     setIsLoading(false);
   }, [token]);
+  // Get the total of cart.
+  useEffect(() => {
+    const getTotal = async () => {
+      const total = cart.reduce((total, el) => {
+        return total + el.price * el.quantity;
+      }, 0);
+      setCartTotal(total);
+    };
+    getTotal();
+  }, [cart]);
+
   const signIn = async (values: SignInInterface) => {
     setIsLoading(true);
-    await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users/login`, {
-      method: "POST",
-      body: JSON.stringify({ ...values }),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        setToken(data.accessToken);
-        Cookies.set("access", data.accessToken, {
-          expires: new Date().getTime() + 5 * 60 * 1000,
-          sameSite: process.env.NODE_ENV === "production" ? "none" : "Lax",
-          secure: process.env.NODE_ENV === "production" ? true : false,
-        });
-        Cookies.set("refresh", data.refreshToken, {
-          expires: new Date().getTime() + 7 * 24 * 60 * 60 * 1000,
-          sameSite: process.env.NODE_ENV === "production" ? "none" : "Lax",
-          secure: process.env.NODE_ENV === "production" ? true : false,
-        });
+    try {
+      const { data } = await myAxios.post("/api/users/login", { ...values });
+      setToken(data.accessToken);
+      setTokensToCookie(data.accessToken, data.refreshToken);
+      setIsLoading(false);
+    } catch (error: any) {
+      if (error.response.data) {
         setIsLoading(false);
-      })
-      .catch((err) => console.error(err));
+        activateAlert(AlertTypes.ERROR, error.response.data.message);
+      }
+    }
   };
-  const signUp = async (values: SignInInterface) => {
+  const signUp = async (values: SignUpInterface) => {
     setIsLoading(true);
-    await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users/register`, {
-      method: "POST",
-      body: JSON.stringify({ ...values }),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        setToken(data.accessToken);
-        Cookies.set("access", data.accessToken, {
-          expires: new Date().getTime() + 5 * 60 * 1000,
-          sameSite: process.env.NODE_ENV === "production" ? "none" : "Lax",
-          secure: process.env.NODE_ENV === "production" ? true : false,
-        });
-        Cookies.set("refresh", data.refreshToken, {
-          expires: new Date().getTime() + 7 * 24 * 60 * 60 * 1000,
-          sameSite: process.env.NODE_ENV === "production" ? "none" : "Lax",
-          secure: process.env.NODE_ENV === "production" ? true : false,
-        });
+    try {
+      const { data } = await myAxios.post("/api/users/register", { ...values });
+      setToken(data.accessToken);
+      setTokensToCookie(data.accessToken, data.refreshToken);
+      setIsLoading(false);
+    } catch (error: any) {
+      if (error.response.data) {
         setIsLoading(false);
-      })
-      .catch((err) => console.error(err));
+        activateAlert(AlertTypes.ERROR, error.response.data.message);
+      }
+    }
   };
   // Sign out verification
   const signOut = () => {
-    Cookies.remove("access");
-    Cookies.remove("refresh");
+    clearTokens();
     Router.push("/");
     setIsLogged(false);
     setUser(null);
@@ -130,7 +108,30 @@ export const UserProvider = ({ children }: userProviderProps) => {
     setIsLogged(false);
     setIsLoading(false);
   };
-  const addToCart = () => {};
+  // Cart
+  const addToCart = async (product: CartInterface) => {
+    if (isLogged && !isAdmin) {
+      const check = cart?.every((item) => {
+        return item._id !== product._id;
+      });
+      if (check) {
+        try {
+          const { data } = await myAxios.patch("/api/users/add_cart", {
+            cart: [...cart, { ...product, quantity: 1 }],
+          });
+          activateAlert(AlertTypes.SUCCESS, data.messages);
+          setCart([...cart, { ...product, quantity: 1 }]);
+        } catch (error: any) {
+          if (error.response.data) {
+            setIsLoading(false);
+            activateAlert(AlertTypes.ERROR, error.response.data.message);
+          }
+        }
+      } else {
+        activateAlert(AlertTypes.ERROR, "Error, this product is in your cart.");
+      }
+    }
+  };
   const incrementQuantity = () => {};
   const decrementQuantity = () => {};
   const removeProductFromCart = () => {};

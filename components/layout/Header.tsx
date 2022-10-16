@@ -43,7 +43,10 @@ const Header = () => {
           <Link href={"/dashboard"}>
             <a className="ml-3 text-sm">Dashboard</a>
           </Link>
-          <button className="ml-3 text-sm text-pink-500 border-2 px-2 py-1 rounded-sm border-pink-500 hover:bg-pink-500 hover:text-white duration-200">
+          <button
+            className="ml-3 text-sm text-pink-500 border-2 px-2 py-1 rounded-sm border-pink-500 hover:bg-pink-500 hover:text-white duration-200"
+            onClick={() => signOut()}
+          >
             Sign out
           </button>
         </div>

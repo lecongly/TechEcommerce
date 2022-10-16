@@ -1,14 +1,12 @@
-export const refreshToken = async () => {
-  const response = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/api/users/refresh`,
-    {
-      method: "POST",
-      headers: {
-        "Content-type": "application/json; charset=UTF-8",
-      },
-      credentials: "include",
-    }
-  ).then((response) => response.json());
+import Cookies from "js-cookie";
+import myAxios from "../axios";
+import { setTokensToCookie } from "../cookie";
 
-  return response;
+export const refreshToken = async () => {
+  try {
+    const { data } = await myAxios.post("/api/users/refresh");
+    setTokensToCookie(data.accessToken, data.refreshToken);
+  } catch (error) {
+    console.log(error);
+  }
 };

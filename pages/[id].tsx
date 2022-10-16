@@ -8,26 +8,36 @@ import Layout from "../components/layout";
 import { ProductInterface } from "../interfaces/products";
 import VerticalProductCard from "../components/products/VerticalProductCard";
 import Loader from "../components/Loader";
+import { UserContext } from "../context/User.Context";
+import { AppContext } from "../context/AppContext";
+import myAxios from "../helpers/axios";
 
-const fetcherAll = (args: string) =>
-  fetch(args).then((res): Promise<ProductInterface[]> => res.json());
 const fetcherSingle = (args: string) =>
   fetch(args).then((res): Promise<ProductInterface> => res.json());
 
+const fetcherSingleProduct = async (url: string): Promise<ProductInterface> => {
+  console.log(url);
+  return await myAxios
+    .get(url)
+    .then((res) => res.data)
+    .catch((error) => {
+      console.log(error);
+    });
+};
 const ProductDetail = () => {
   const { query } = useRouter();
   const { id } = query;
 
   const { data, isValidating } = useSWR(
-    `${process.env.NEXT_PUBLIC_API_URL}/api/products/${id}`,
-    fetcherSingle
+    `/api/products/${id}`,
+    fetcherSingleProduct
   );
-  const { data: products } = useSWR(
-    `${process.env.NEXT_PUBLIC_API_URL}/api/products`,
-    fetcherAll
-  );
+  const { productsContent } = useContext(AppContext);
+  const { products } = productsContent;
 
   const [relateds, setRelateds] = useState<ProductInterface[]>([]);
+
+  const { addToCart, addToWishList } = useContext(UserContext);
 
   useEffect(() => {
     if (products && data) {
@@ -73,7 +83,10 @@ const ProductDetail = () => {
                 <p className="text-2xl font-bold">$ {data?.price}</p>
                 {data && (
                   <div className="xs:mt-5 sm:mt-20 md:mt-5 lg:mt-20 xl:mt-20">
-                    <button className="bg-zinc-900 px-10 py-2.5 text-white mr-5 hover:bg-zinc-700 duration-150">
+                    <button
+                      className="bg-zinc-900 px-10 py-2.5 text-white mr-5 hover:bg-zinc-700 duration-150"
+                      onClick={() => addToCart({ ...data, quantity: 1 })}
+                    >
                       Add to cart
                     </button>
                     <button className=" p-2.5 ">

@@ -4,6 +4,7 @@ import { appContextProps } from "../interfaces/context/AppContext";
 import { ContextProviderProps } from "../interfaces/context/contextProvider";
 import { ProductInterface } from "../interfaces/products";
 import useSWR from "swr";
+import myAxios from "../helpers/axios";
 
 export const AppContext = createContext({} as appContextProps);
 
@@ -14,18 +15,31 @@ export const AppProvider = ({ children }: ContextProviderProps) => {
   const [openSignInModal, setOpenSignInModal] = useState<boolean>(false);
   const [openSignUpModal, setOpenSignUpModal] = useState<boolean>(false);
 
-  const fetcherProducts = (args: string) =>
-    fetch(args).then((res): Promise<ProductInterface[]> => res.json());
-
-  const fetcherCategories = (args: string) =>
-    fetch(args).then((res): Promise<CategoryInterface[]> => res.json());
+  const fetcherProducts = async (url: string): Promise<ProductInterface[]> => {
+    return await myAxios
+      .get(url)
+      .then((res) => res.data)
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+  const fetcherCategories = async (
+    url: string
+  ): Promise<CategoryInterface[]> => {
+    return await myAxios
+      .get(url)
+      .then((res) => res.data)
+      .catch((error) => {
+        console.log(error);
+      });
+  };
 
   const { data: productsData, isValidating: productsLoading } = useSWR(
-    `${process.env.NEXT_PUBLIC_API_URL}/api/products`,
+    `/api/products`,
     fetcherProducts
   );
   const { data: categoriesData, isValidating: categoriesLoading } = useSWR(
-    `${process.env.NEXT_PUBLIC_API_URL}/api/categories`,
+    `/api/categories`,
     fetcherCategories
   );
   useEffect(() => {
