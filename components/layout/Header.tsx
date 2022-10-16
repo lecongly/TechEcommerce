@@ -2,10 +2,16 @@ import Link from "next/link";
 import Image from "next/image";
 import { FiSearch, FiBriefcase } from "react-icons/fi";
 import { BsBookmarkHeart } from "react-icons/bs";
+import { useContext } from "react";
+import { UserContext } from "../../context/User.Context";
+import { AppContext } from "../../context/AppContext";
 
 const Header = () => {
-  const isLogged = true;
-  const isAdmin = false;
+  const { isLogged, isAdmin, cart, wishList, signOut } =
+    useContext(UserContext);
+  const { signInModal, signUpModal } = useContext(AppContext);
+  const { setOpenSignInModal } = signInModal;
+  const { setOpenSignUpModal } = signUpModal;
   return (
     <header className="max-w-screen-xl mx-auto h-24 relative flex flex-row items-center justify-between z-50">
       <Link href="/">
@@ -16,9 +22,19 @@ const Header = () => {
 
       {!isLogged && (
         <div className="flex items-center justify-center">
-          <button className="mr-3 text-sm">Sign In</button>
+          <button
+            className="mr-3 text-sm"
+            onClick={() => setOpenSignInModal(true)}
+          >
+            Sign In
+          </button>
           <span className="h-5 w-0.5 rounded-xl bg-black" />
-          <button className="ml-3 text-sm">Create account</button>
+          <button
+            className="ml-3 text-sm"
+            onClick={() => setOpenSignUpModal(true)}
+          >
+            Create account
+          </button>
         </div>
       )}
 
@@ -48,21 +64,24 @@ const Header = () => {
           <Link href="/wishlist">
             <div className="ml-3 relative text-black cursor-pointer">
               <span className="w-4 h-4 rounded-full border white border-pink-500 absolute top-0 right-0 text-xs flex items-center justify-center">
-                3
+                {wishList?.length}
               </span>
               <span className="text-3xl text-pink-500">
                 <BsBookmarkHeart />
               </span>
             </div>
           </Link>
-          <button className="ml-3 text-sm text-pink-500 border-2 px-3 py-1.5  rounded-lg border-pink-500 hover:bg-pink-500 hover:text-white duration-200">
+          <button
+            className="ml-3 text-sm text-pink-500 border-2 px-3 py-1.5  rounded-lg border-pink-500 hover:bg-pink-500 hover:text-white duration-200"
+            onClick={() => signOut()}
+          >
             Sign out
           </button>
           <Link href="/cart">
             <a className="h-24 aspect-square ml-3 rounded-b-3xl bg-neutral-900 text-white flex items-center justify-center">
               <div className="relative">
                 <span className="w-4 h-4 rounded-full absolute top-0 right-0 text-xs bg-pink-500 flex items-center justify-center">
-                  3
+                  {cart?.length}
                 </span>
                 <span className="text-3xl">
                   <FiBriefcase />

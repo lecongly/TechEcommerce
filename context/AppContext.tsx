@@ -11,6 +11,8 @@ export const AppProvider = ({ children }: ContextProviderProps) => {
   const [products, setProducts] = useState<ProductInterface[]>([]);
   const [categories, setCategories] = useState<CategoryInterface[]>([]);
   const [productSearch, setProductSearch] = useState<string>("");
+  const [openSignInModal, setOpenSignInModal] = useState<boolean>(false);
+  const [openSignUpModal, setOpenSignUpModal] = useState<boolean>(false);
 
   const fetcherProducts = (args: string) =>
     fetch(args).then((res): Promise<ProductInterface[]> => res.json());
@@ -45,6 +47,8 @@ export const AppProvider = ({ children }: ContextProviderProps) => {
   return (
     <AppContext.Provider
       value={{
+        signInModal: { openSignInModal, setOpenSignInModal },
+        signUpModal: { openSignUpModal, setOpenSignUpModal },
         productsContent: { products, productsLoading },
         categoriesContent: { categories, categoriesLoading },
         productSearch,

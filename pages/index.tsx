@@ -15,7 +15,6 @@ import { ProductInterface } from "../interfaces/products";
 const Home: NextPage = () => {
   const { productsContent } = useContext(AppContext);
   const { products, productsLoading } = productsContent;
-  console.log(products);
   const [latest, setLatest] = useState<ProductInterface[]>([]);
   const [category, setCategory] = useState<CategoryInterface>({
     name: "All",

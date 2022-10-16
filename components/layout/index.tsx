@@ -1,4 +1,8 @@
 import Head from "next/head";
+import { useContext } from "react";
+import { AppContext } from "../../context/AppContext";
+import { LayoutContext } from "../../context/LayoutContext";
+import SignIn from "../auth/SignIn";
 
 interface Props {
   title: string;
@@ -7,6 +11,10 @@ interface Props {
 }
 
 const Layout = ({ children, title }: Props) => {
+  const { signInModal, signUpModal } = useContext(AppContext);
+  const { alert, alertMessage, alertType } = useContext(LayoutContext);
+  const { openSignInModal } = signInModal;
+  const { openSignUpModal } = signUpModal;
   return (
     <>
       <Head>
@@ -19,6 +27,7 @@ const Layout = ({ children, title }: Props) => {
       </Head>
       <main className="relative w-full h-full">
         <div className="w-full content py-5">{children}</div>
+        {openSignInModal && <SignIn />}
       </main>
     </>
   );
