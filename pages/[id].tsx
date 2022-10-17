@@ -16,7 +16,6 @@ const fetcherSingle = (args: string) =>
   fetch(args).then((res): Promise<ProductInterface> => res.json());
 
 const fetcherSingleProduct = async (url: string): Promise<ProductInterface> => {
-  console.log(url);
   return await myAxios
     .get(url)
     .then((res) => res.data)
@@ -90,7 +89,10 @@ const ProductDetail = () => {
                       Add to cart
                     </button>
                     <button className=" p-2.5 ">
-                      <span className="border-b-2 border-zinc-900 pb-1">
+                      <span
+                        className="border-b-2 border-zinc-900 pb-1"
+                        onClick={() => addToWishList({ ...data })}
+                      >
                         Add to wish list
                       </span>
                     </button>

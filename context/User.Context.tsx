@@ -119,7 +119,10 @@ export const UserProvider = ({ children }: userProviderProps) => {
           const { data } = await myAxios.patch("/api/users/add_cart", {
             cart: [...cart, { ...product, quantity: 1 }],
           });
-          activateAlert(AlertTypes.SUCCESS, data.messages);
+          activateAlert(
+            AlertTypes.SUCCESS,
+            "Product has been added successfully."
+          );
           setCart([...cart, { ...product, quantity: 1 }]);
         } catch (error: any) {
           if (error.response.data) {
@@ -132,10 +135,37 @@ export const UserProvider = ({ children }: userProviderProps) => {
       }
     }
   };
+  const addToWishList = async (product: ProductInterface) => {
+    if (isLogged && !isAdmin) {
+      const checkWishList = wishList?.every((item) => {
+        return item._id !== product._id;
+      });
+      if (checkWishList) {
+        try {
+          const { data } = await myAxios.patch("/api/users/wish_list", {
+            wishList: [...wishList, { ...product }],
+          });
+          console.log(data);
+          activateAlert(AlertTypes.SUCCESS, "Product added to your wish list.");
+          setWishList([...wishList, { ...product }]);
+        } catch (error: any) {
+          if (error.response.data) {
+            setIsLoading(false);
+            activateAlert(AlertTypes.ERROR, error.response.data.message);
+          }
+        }
+      } else {
+        activateAlert(
+          AlertTypes.ERROR,
+          "Error, this product is in your wish list."
+        );
+      }
+    }
+  };
+
   const incrementQuantity = () => {};
   const decrementQuantity = () => {};
   const removeProductFromCart = () => {};
-  const addToWishList = () => {};
   const removeProductFromWishList = () => {};
   return (
     <UserContext.Provider
