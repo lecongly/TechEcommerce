@@ -116,7 +116,7 @@ export const UserProvider = ({ children }: userProviderProps) => {
       });
       if (check) {
         try {
-          const { data } = await myAxios.patch("/api/users/add_cart", {
+          await myAxios.patch("/api/users/add_cart", {
             cart: [...cart, { ...product, quantity: 1 }],
           });
           activateAlert(
@@ -142,10 +142,9 @@ export const UserProvider = ({ children }: userProviderProps) => {
       });
       if (checkWishList) {
         try {
-          const { data } = await myAxios.patch("/api/users/wish_list", {
+          await myAxios.patch("/api/users/wish_list", {
             wishList: [...wishList, { ...product }],
           });
-          console.log(data);
           activateAlert(AlertTypes.SUCCESS, "Product added to your wish list.");
           setWishList([...wishList, { ...product }]);
         } catch (error: any) {
@@ -162,11 +161,45 @@ export const UserProvider = ({ children }: userProviderProps) => {
       }
     }
   };
+  const incrementQuantity = (id: string) => {
+    cart.forEach((el) => {
+      if (el._id === id) {
+        el.quantity >= el.stock ? (el.quantity = el.stock) : (el.quantity += 1);
+      }
+    });
+    setCart([...cart]);
+  };
 
-  const incrementQuantity = () => {};
-  const decrementQuantity = () => {};
-  const removeProductFromCart = () => {};
-  const removeProductFromWishList = () => {};
+  const decrementQuantity = (id: string) => {
+    cart.forEach((el) => {
+      if (el._id === id) {
+        el?.quantity === 1 ? (el.quantity = 1) : (el.quantity -= 1);
+      }
+    });
+    setCart([...cart]);
+  };
+
+  const removeProductFromCart = async (id: string) => {
+    cart.forEach((el, i) => {
+      if (el._id === id) {
+        cart.splice(i, 1);
+      }
+    });
+    setCart([...cart]);
+    await myAxios.patch("/api/users/add_cart", { cart: [...cart] });
+    activateAlert(AlertTypes.SUCCESS, "Product removed successfully.");
+  };
+
+  const removeProductFromWishList = async (id: string) => {
+    wishList.forEach((el, i) => {
+      if (el._id === id) {
+        wishList.splice(i, 1);
+      }
+    });
+    setWishList([...wishList]);
+    await myAxios.patch("/api/users/wish_list", { wishList: [...wishList] });
+    activateAlert(AlertTypes.SUCCESS, "Product removed successfully.");
+  };
   return (
     <UserContext.Provider
       value={{
