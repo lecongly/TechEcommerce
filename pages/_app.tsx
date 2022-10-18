@@ -4,14 +4,17 @@ import { AppProvider } from "../context/AppContext";
 import { LayoutProvider } from "../context/LayoutContext";
 import Header from "../components/layout/Header";
 import { UserProvider } from "../context/User.Context";
+import { AdminProvider } from "../context/AdminContext";
 
 function MyApp({ Component, pageProps, router }: AppProps) {
   return (
     <AppProvider>
       <LayoutProvider>
         <UserProvider>
-          {router.pathname.includes("/sign") ? <div></div> : <Header />}
-          <Component {...pageProps} />
+          <AdminProvider>
+            {router.pathname.includes("/sign") ? <div></div> : <Header />}
+            <Component {...pageProps} />
+          </AdminProvider>
         </UserProvider>
       </LayoutProvider>
     </AppProvider>

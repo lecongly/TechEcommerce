@@ -2,6 +2,11 @@ import { useRouter } from "next/router";
 import { createContext, useContext, useEffect, useState } from "react";
 import { ProductInterface } from "../interfaces/products";
 
+import Cookies from "js-cookie";
+import { getCurrentUser } from "../helpers/auth/getCurrentUser";
+import myAxios from "../helpers/axios";
+import { clearTokens, setTokensToCookie } from "../helpers/cookie";
+import { AlertTypes } from "../interfaces/frontend/alerts";
 import {
   CartInterface,
   SignInInterface,
@@ -10,13 +15,7 @@ import {
   userContextProps,
   userProviderProps,
 } from "../interfaces/userContext";
-import Cookies from "js-cookie";
-import { refreshToken } from "../helpers/auth/refreshToken";
-import { getCurrentUser } from "../helpers/auth/getCurrentUser";
 import { LayoutContext } from "./LayoutContext";
-import { AlertTypes } from "../interfaces/frontend/alerts";
-import myAxios from "../helpers/axios";
-import { clearTokens, setTokensToCookie } from "../helpers/cookie";
 
 export const UserContext = createContext({} as userContextProps);
 

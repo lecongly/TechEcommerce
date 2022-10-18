@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import { useContext, useEffect } from "react";
-import WishlistCard from "../components/wishlist/WishlistCard";
 import Layout from "../components/layout";
+import WishlistCard from "../components/wishlist/WishlistCard";
 import { UserContext } from "../context/User.Context";
 
 const WishList = () => {
