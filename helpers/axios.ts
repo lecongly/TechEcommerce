@@ -3,8 +3,12 @@ import Cookies from "js-cookie";
 import { refreshToken } from "./auth/refreshToken";
 
 const myAxios = axios.create({
-  withCredentials: true,
   baseURL: process.env.NEXT_PUBLIC_API_URL,
+  withCredentials: true,
+  headers: {
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,PATCH,OPTIONS",
+  },
 });
 
 myAxios.interceptors.request.use(async (config: any) => {

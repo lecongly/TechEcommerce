@@ -1,5 +1,6 @@
 import { useRouter } from "next/router";
 import { useContext, useEffect, useState } from "react";
+import AdminCategories from "../components/admin/AdminCategories";
 import AdminUsers from "../components/admin/AdminUsers";
 import AdminHeader from "../components/dashboard/Header";
 import Layout from "../components/layout";
@@ -20,9 +21,9 @@ const Dashboard = () => {
       <AdminHeader view={view} setView={setView} />
       <section className="max-w-screen-xl w-full mx-auto">
         {view === viewOptions.USERS && <AdminUsers />}
-        {/* {view === viewOptions.CATEGORIES && <AdminCategories />}
-        {view === viewOptions.PRODUCTS && <AdminProducts />}
-        {view === viewOptions.PAYMENTS && <AdminPayments />} */}
+        {view === viewOptions.CATEGORIES && <AdminCategories />}
+        {/* {view === viewOptions.PRODUCTS && <AdminProducts />} */}
+        {/* {view === viewOptions.PAYMENTS && <AdminPayments />} */}
       </section>
     </Layout>
   );
