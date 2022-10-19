@@ -6,6 +6,8 @@ const myAxios = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL,
   withCredentials: true,
   headers: {
+    "Content-Type": "application/json",
+    "Access-Control-Allow-Credentials": true,
     "Access-Control-Allow-Origin": "*",
     "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,PATCH,OPTIONS",
   },
@@ -21,7 +23,6 @@ myAxios.interceptors.request.use(async (config: any) => {
   }
   const accessExpires = Number(Cookies.get("accessExpires"));
   const now = new Date().getTime();
-  console.log("Het han: ", accessExpires < now);
   if (accessExpires < now) {
     console.log("refreshToken");
     await refreshToken();
