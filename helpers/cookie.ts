@@ -8,9 +8,8 @@ enum TokenExpiration {
 export function setTokensToCookie(access: string, refresh?: string) {
   Cookies.set("access", access, {
     expires: new Date().getTime() + TokenExpiration.Access,
-    httpOnly: true,
-    sameSite: "None",
     secure: true,
+    sameSite: "none",
   });
   Cookies.set(
     "accessExpires",
@@ -19,9 +18,8 @@ export function setTokensToCookie(access: string, refresh?: string) {
   if (refresh)
     Cookies.set("refresh", refresh, {
       expires: new Date().getTime() + TokenExpiration.Refresh,
-      httpOnly: true,
-      sameSite: "None",
       secure: true,
+      sameSite: "none",
     });
 }
 export function clearTokens() {
